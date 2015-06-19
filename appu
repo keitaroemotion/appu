@@ -28,6 +28,7 @@ when "help"
   puts "appu list [keyword] ... enlist applications start with the keyword"
   puts "appu      [keyword] ... open the application start with the kw."
   puts "                        if multiple apps found, those are enlisted"
+  puts "appu kill [keyword] ... kill the application starts with the kw"
   puts
 when "list"
   if ARGV.size < 2
