@@ -15,4 +15,10 @@ the following conditions required:
 2) Ruby installed
 
 
+1. First Install the program.
 
+$ ./setup
+
+2. Secondly, type as follows:
+
+appu help
