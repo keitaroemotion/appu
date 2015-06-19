@@ -10,15 +10,18 @@ the following conditions required:
 
 1) You have the following path on your MacOSX:
 
-/Applications/
+      /Applications/
 
 2) Ruby installed
 
 
-1. First Install the program.
+Usage
+-------------------------------
 
-$ ./setup
+1) First Install the program.
 
-2. Secondly, type as follows:
+     $ ./setup
 
-appu help
+2) Secondly, type as follows:
+
+     appu help
