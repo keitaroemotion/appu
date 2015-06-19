@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+APP_DIR = "/Applications"
+
+def guess(key)
+  list = Array.new
+  Dir["#{APP_DIR}/*"].each do |app|
+    if app.gsub("#{APP_DIR}/","").gsub("\ ","").downcase.start_with? key.downcase
+      list.push app
+    end
+  end
+  list
+end
+
+operation = ARGV[0]
+
+case operation
+when "help"
+  line = "=============="
+  tab = "     "
+  puts line
+  printf tab
+  puts "appu"
+  puts line
+
+  puts "appu list [keyword] ... enlist applications start with the keyword"
+  puts "appu      [keyword] ... open the application start with the kw."
+  puts "                        if multiple apps found, those are enlisted"
+  puts
+when "list"
+  if ARGV.size < 2
+    abort "arg size insufficient"
+  end
+  puts guess ARGV[1]
+else
+  if ARGV.size == 0
+    abort "arg size insufficient"
+  end
+  list = guess ARGV[0]
+  if list.size == 1
+    system("open #{list[0].gsub(" ","\\ ")}")
+  else
+    puts list
+  end
+end
+
