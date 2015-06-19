@@ -1,8 +1,25 @@
 #!/usr/bin/env ruby
 
-APP_DIR = "/Applications/"
+APP_DIR = "/Applications"
 
 def guess(key)
-  Dir[APP_DIR]
+  Dir["#{APP_DIR}/*"].each do |app|
+    if app.gsub("#{APP_DIR}/","").gsub("\ ","").downcase.start_with? key.downcase
+     puts app
+    end
+  end
+end
+
+operation = ARGV[0]
+
+case operation
+when ""
+when "list"
+  if ARGV.size < 2
+    abort "arg size insufficient"
+  end
+  guess ARGV[1]
+else
+  abort "operation nil"
 end
 
