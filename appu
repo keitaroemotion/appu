@@ -56,7 +56,9 @@ else
     abort "arg size insufficient"
   end
   list = guess ARGV[0]
-  if list.size == 1
+  if list.size == 0
+    abort "ERROR: application starting with requested kw does not exist."
+  elsif list.size == 1
     system("open #{list[0].gsub(" ","\\ ")}")
   else
     puts list
