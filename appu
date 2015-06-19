@@ -12,6 +12,8 @@ def guess(key)
   list
 end
 
+
+
 operation = ARGV[0]
 
 case operation
@@ -32,6 +34,22 @@ when "list"
     abort "arg size insufficient"
   end
   puts guess ARGV[1]
+when "kill"
+  if ARGV.size < 2
+    abort "arg size insufficient"
+  end
+  list = guess ARGV[1]
+  if list.size == 1
+    res = %x(ps aux | grep "#{list[0].gsub(" ","\\ ")}")
+    puts "Do you really want #{list[0]} be dead? [Y/n]"
+    ans = $stdin.gets.chomp
+    if (ans.downcase == "y")
+      system("kill #{res.split(' ')[1]}")
+    else
+    end
+  else
+    puts list
+  end
 else
   if ARGV.size == 0
     abort "arg size insufficient"
