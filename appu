@@ -29,9 +29,9 @@ when "help"
   puts "appu         [keyword] ... open the application start with the kw."
   puts "                        if multiple apps found, those are enlisted"
   puts "appu kill    [keyword] ... kill the application starts with the kw"
-  puts "appu wfind/wf[keyword] ... kill the application starts with the kw"
+  puts "appu web     [keyword] ... kill the application starts with the kw"
   puts
-when "wfind", "wf" #webfind
+when "web", "w" #webfind
   url = "https://www.google.co.jp/search?q="
   li = ARGV.size-1 #last_index
   if li == 0
