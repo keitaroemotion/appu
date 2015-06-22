@@ -115,6 +115,9 @@ when "list", "lis", "li", "ls"
   puts guess ARGV[1]
 when "clean" #clean trash
   system("rm -rf ~/.Trash/*")
+when "del"
+  from = ARGV[1]
+  system ("mv #{from} ~/.Trash ")
 when "kill"
   if ARGV.size < 2
     abort "arg size insufficient"
