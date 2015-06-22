@@ -52,6 +52,9 @@ when "rand" #read the olderst and bring it to the top heap
     numero = numero + 1
   end
 when "stash" #stash web location
+  if ARGV.size < 2
+    abort "you need link"
+  end
   FileUtils.mkdir_p target_dir
   link = ARGV[1]
 
