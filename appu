@@ -12,7 +12,10 @@ def guess(key)
   list
 end
 
-
+STASH_HEAP = 1000
+require 'fileutils'
+target_dir = "/usr/local/etc/appu"
+target_file = "#{target_dir}/stash"
 
 operation = ARGV[0]
 
@@ -28,9 +31,48 @@ when "help"
   puts "appu list/ls [keyword] ... enlist applications start with the keyword"
   puts "appu         [keyword] ... open the application start with the kw."
   puts "                        if multiple apps found, those are enlisted"
-  puts "appu kill    [keyword] ... kill the application starts with the kw"
-  puts "appu web     [keyword] ... kill the application starts with the kw"
+  puts "appu kill    [keyword]  ... kill the application starts with the kw"
+  puts "appu web     [keywords] ... "
+  puts "appu stash   [link]     ... stash link "
+  puts "appu rand               ... randomly retrieves & opens stashed link"
+
+
   puts
+when "rand" #read the olderst and bring it to the top heap
+  numero = 0
+  File.open(target_file, "r").each do |line|
+    numero = numero + 1
+  end
+  r =  rand(numero)
+  numero = 0
+  File.open(target_file, "r").each do |line|
+    if (numero == r)
+      system("open #{line}")
+    end
+    numero = numero + 1
+  end
+when "stash" #stash web location
+  FileUtils.mkdir_p target_dir
+  link = ARGV[1]
+
+  arr = Array.new
+  counter = 0
+  if File.exist? target_file
+    File.open(target_file, "r").each do |line|
+      #stash maximum 1000, the olderst eliminated
+      if counter < STASH_HEAP
+        arr.push line
+      end
+      counter = counter + 1
+    end
+  end
+
+  f = File.open(target_file, "w")
+    f.puts link
+    arr.each do |line|
+      f.puts line
+    end
+  f.close
 when "web", "w" #webfind
   url = "https://www.google.co.jp/search?q="
   li = ARGV.size-1 #last_index
