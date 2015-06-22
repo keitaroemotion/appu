@@ -113,6 +113,8 @@ when "list", "lis", "li", "ls"
     abort "arg size insufficient"
   end
   puts guess ARGV[1]
+when "clean" #clean trash
+  system("rm -rf ~/.Trash/*")
 when "kill"
   if ARGV.size < 2
     abort "arg size insufficient"
