@@ -12,7 +12,7 @@ def guess(key)
   list
 end
 
-STASH_HEAP = 1000
+STASH_HEAP = 10000
 require 'fileutils'
 target_dir = "/usr/local/etc/appu"
 target_file = "#{target_dir}/stash"
@@ -27,7 +27,6 @@ when "help"
   printf tab
   puts "appu"
   puts line
-
   puts "appu list/ls [keyword] ... enlist applications start with the keyword"
   puts "appu         [keyword] ... open the application start with the kw."
   puts "                        if multiple apps found, those are enlisted"
@@ -35,21 +34,39 @@ when "help"
   puts "appu web     [keywords] ... "
   puts "appu stash   [link]     ... stash link "
   puts "appu rand               ... randomly retrieves & opens stashed link"
-
-
   puts
 when "rand" #read the olderst and bring it to the top heap
-  numero = 0
-  File.open(target_file, "r").each do |line|
-    numero = numero + 1
-  end
-  r =  rand(numero)
-  numero = 0
-  File.open(target_file, "r").each do |line|
-    if (numero == r)
-      system("open #{line}")
+  def open(stack, r)
+    numero = 0
+    stack.each do |line|
+      if (numero == r)
+        system("open #{line.split(',')[0]}")
+      end
+      numero = numero + 1
     end
-    numero = numero + 1
+  end
+
+  numero = 0
+  if ARGV.size == 1
+    stack = Array.new
+    File.open(target_file, "r").each do |line|
+      stack.push line
+      numero = numero + 1
+    end
+    r =  rand(numero)
+    open stack, r
+  else
+    stack = Array.new
+    File.open(target_file, "r").each do |line|
+      lsp = line.split(',')
+      puts "#{lsp}"
+      if (lsp.include?("#{ARGV[1]}\n")) || (lsp.include?(ARGV[1]))
+        stack.push line
+        numero = numero + 1
+      end
+    end
+    r =  rand(numero)
+    open stack, r
   end
 when "stash" #stash web location
   if ARGV.size < 2
@@ -71,6 +88,11 @@ when "stash" #stash web location
   end
 
   f = File.open(target_file, "w")
+    if ARGV.size > 2
+      for i in (2 .. ARGV.size-1) do
+         link = link + ",#{ARGV[i]}"
+      end
+    end
     f.puts link
     arr.each do |line|
       f.puts line
