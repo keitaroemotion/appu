@@ -25,12 +25,23 @@ when "help"
   puts "appu"
   puts line
 
-  puts "appu list [keyword] ... enlist applications start with the keyword"
-  puts "appu      [keyword] ... open the application start with the kw."
+  puts "appu list/ls [keyword] ... enlist applications start with the keyword"
+  puts "appu         [keyword] ... open the application start with the kw."
   puts "                        if multiple apps found, those are enlisted"
-  puts "appu kill [keyword] ... kill the application starts with the kw"
+  puts "appu kill    [keyword] ... kill the application starts with the kw"
+  puts "appu wfind/wf[keyword] ... kill the application starts with the kw"
   puts
-when "list"
+when "wfind", "wf" #webfind
+  url = "https://www.google.co.jp/search?q="
+  li = ARGV.size-1 #last_index
+  if li == 0
+    abort "ERROR: you need to punch in the serch words"
+  end
+  (1..li-1).each do |i|
+    url += "#{ARGV[i]}+"
+  end
+  system("open #{url+ARGV[li]}")
+when "list", "lis", "li", "ls"
   if ARGV.size < 2
     abort "arg size insufficient"
   end
