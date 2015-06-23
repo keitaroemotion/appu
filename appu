@@ -19,8 +19,7 @@ target_file = "#{target_dir}/stash"
 
 operation = ARGV[0]
 
-case operation
-when "help"
+def help()
   line = "=============="
   tab = "     "
   puts line
@@ -35,6 +34,12 @@ when "help"
   puts "appu stash   [link]     ... stash link "
   puts "appu rand               ... randomly retrieves & opens stashed link"
   puts
+  abort
+end
+
+case operation
+when "help"
+  help
 when "rand" #read the olderst and bring it to the top heap
   def open(stack, r)
     numero = 0
@@ -115,9 +120,34 @@ when "list", "lis", "li", "ls"
   puts guess ARGV[1]
 when "clean" #clean trash
   system("rm -rf ~/.Trash/*")
+when "renamefiles"
+  dir_location = "#{ARGV[1]}/*"
+  from = ARGV[2]
+  to = ARGV[3]
+  if ARGV.size < 4
+    abort "argument size non sufficient"
+  end
+  Dir[dir_location].each do |file|
+    #if file.include? from
+    #end
+    puts file
+  end
 when "del"
-  from = ARGV[1]
-  system ("mv #{from} ~/.Trash ")
+  #solve conflict!
+  command = "mv "
+  (1 .. ARGV.size-1).each do |x|
+    file = ARGV[x]
+    filepath = "~/.Trash/#{file}"
+    puts "fp: #{filepath}"
+    if (File.exist?(filepath) || Dir.exist?(filepath))
+      puts "pass"
+      file2 = file + Time.now.to_s
+      system("mv #{file} #{file2}")
+    end
+    command += "#{file} "
+  end
+  command += "~/.Trash"
+  system(command)
 when "kill"
   if ARGV.size < 2
     abort "arg size insufficient"
@@ -136,7 +166,7 @@ when "kill"
   end
 else
   if ARGV.size == 0
-    abort "arg size insufficient"
+    help
   end
   list = guess ARGV[0]
   if list.size == 0
