@@ -36,6 +36,7 @@ def help()
   puts "appu listlink/ll           ... list all links"
   puts "appu listlink [tag]          ... list all links related to tag"
   puts "appu listtag/lt            ... list all tags"
+  puts "appu -[tag]            ... list links of the tag"
   puts
   abort
 end
@@ -63,6 +64,13 @@ def format_link_et_tag(line)
   end
 end
 
+def listlink(target_file, tag)
+  File.open(target_file, "r").each do |line|
+    if ((tag == nil) || tagexists(line, tag))
+      format_link_et_tag(line)
+    end
+  end
+end
 
 case operation
 when "help"
@@ -90,14 +98,7 @@ when "listtag", "lt"
   end
   puts
 when "listlink", "ll"
-
-  tag = ARGV[1]
-  #puts tag
-  File.open(target_file, "r").each do |line|
-    if ((tag == nil) || tagexists(line, tag))
-      format_link_et_tag(line)
-    end
-  end
+  listlink(target_file, ARGV[1])
 when "rand" #read the olderst and bring it to the top heap
   def open(stack, r)
     numero = 0
@@ -228,7 +229,11 @@ else
   end
   list = guess ARGV[0]
   if list.size == 0
-    abort "ERROR: application starting with requested kw does not exist."
+    if ARGV[0].start_with? "-"
+      listlink target_file, ARGV[0].gsub("-","")
+    else
+      help
+    end
   elsif list.size == 1
     system("open #{list[0].gsub(" ","\\ ")}")
   else
