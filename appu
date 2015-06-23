@@ -33,9 +33,9 @@ def help()
   puts "appu web     [keywords] ... "
   puts "appu stash   [link] (optional:[tag])     ... stash link "
   puts "appu rand    (optional:tag)           ... randomly retrieves & opens stashed link"
-  puts "appu listlink           ... list all links"
+  puts "appu listlink/ll           ... list all links"
   puts "appu listlink [tag]          ... list all links related to tag"
-  puts "appu listtag            ... list all tags"
+  puts "appu listtag/lt            ... list all tags"
   puts
   abort
 end
@@ -67,7 +67,7 @@ end
 case operation
 when "help"
   help
-when "listtag"
+when "listtag", "lt"
   bucket = Array.new
   File.open(target_file, "r").each do |line|
     ls = line.split(',')
@@ -89,7 +89,7 @@ when "listtag"
     counter += 1
   end
   puts
-when "listlink"
+when "listlink", "ll"
 
   tag = ARGV[1]
   #puts tag
@@ -235,4 +235,3 @@ else
     puts list
   end
 end
-
