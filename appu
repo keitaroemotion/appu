@@ -41,6 +41,8 @@ def help()
   abort
 end
 
+require 'colorize'
+
 def tagexists(line, tag)
   lsp = line.split(',')
   #puts "#{lsp}"
@@ -52,7 +54,9 @@ def format_link_et_tag(line)
   limit = 60
   if lsp.size > 1
     (1..lsp.size-1).each do |e|
-      printf "[#{lsp[e].chomp}] "
+      printf "["
+      printf "#{lsp[e].chomp.green}"
+      printf "]"
     end
     if lsp[0] != nil
       puts  "#{lsp[0][0..limit]}"
@@ -92,7 +96,7 @@ when "listtag", "lt"
       puts
       counter = 0
     else
-      print "[#{tag}]"
+      print "[#{tag.green}]"
     end
     counter += 1
   end
@@ -171,7 +175,7 @@ when "web", "w" #webfind
   (1..li-1).each do |i|
     url += "#{ARGV[i]}+"
   end
-  system("open #{url+ARGV[li]}")
+  system "open #{url+ARGV[li]}"
 when "list", "lis", "li", "ls"
   if ARGV.size < 2
     abort "arg size insufficient"
