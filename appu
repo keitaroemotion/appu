@@ -31,15 +31,73 @@ def help()
   puts "                        if multiple apps found, those are enlisted"
   puts "appu kill    [keyword]  ... kill the application starts with the kw"
   puts "appu web     [keywords] ... "
-  puts "appu stash   [link]     ... stash link "
-  puts "appu rand               ... randomly retrieves & opens stashed link"
+  puts "appu stash   [link] (optional:[tag])     ... stash link "
+  puts "appu rand    (optional:tag)           ... randomly retrieves & opens stashed link"
+  puts "appu listlink           ... list all links"
+  puts "appu listlink [tag]          ... list all links related to tag"
+  puts "appu listtag            ... list all tags"
   puts
   abort
 end
 
+def tagexists(line, tag)
+  lsp = line.split(',')
+  #puts "#{lsp}"
+  return  (lsp.include?("#{tag}\n")) || (lsp.include?(tag))
+end
+
+def format_link_et_tag(line)
+  lsp = line.split(',')
+  limit = 60
+  if lsp.size > 1
+    (1..lsp.size-1).each do |e|
+      printf "[#{lsp[e].chomp}] "
+    end
+    if lsp[0] != nil
+      puts  "#{lsp[0][0..limit]}"
+    else
+      puts
+    end
+  else
+    puts "[none] #{line[0..limit]}"
+  end
+end
+
+
 case operation
 when "help"
   help
+when "listtag"
+  bucket = Array.new
+  File.open(target_file, "r").each do |line|
+    ls = line.split(',')
+    (1 .. ls.size-1).each do |e|
+      if bucket.include?(ls[e].chomp) == false
+        bucket.push ls[e].chomp
+      end
+    end
+  end
+  counter = 0
+  hor_len = 6
+  bucket.each do |tag|
+    if counter == hor_len
+      puts
+      counter = 0
+    else
+      print "[#{tag}]"
+    end
+    counter += 1
+  end
+  puts
+when "listlink"
+
+  tag = ARGV[1]
+  #puts tag
+  File.open(target_file, "r").each do |line|
+    if ((tag == nil) || tagexists(line, tag))
+      format_link_et_tag(line)
+    end
+  end
 when "rand" #read the olderst and bring it to the top heap
   def open(stack, r)
     numero = 0
@@ -63,9 +121,7 @@ when "rand" #read the olderst and bring it to the top heap
   else
     stack = Array.new
     File.open(target_file, "r").each do |line|
-      lsp = line.split(',')
-      puts "#{lsp}"
-      if (lsp.include?("#{ARGV[1]}\n")) || (lsp.include?(ARGV[1]))
+      if (tagexists(line, ARGV[1]))
         stack.push line
         numero = numero + 1
       end
@@ -98,7 +154,9 @@ when "stash" #stash web location
          link = link + ",#{ARGV[i]}"
       end
     end
-    f.puts link
+    if link.start_with? "http"
+      f.puts link
+    end
     arr.each do |line|
       f.puts line
     end
