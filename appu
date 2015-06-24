@@ -36,7 +36,8 @@ def help()
   puts "appu listlink/ll           ... list all links"
   puts "appu listlink [tag]          ... list all links related to tag"
   puts "appu listtag/lt            ... list all tags"
-  puts "appu -[tag]            ... list links of the tag"
+  puts "appu /[tag]            ... list links of the tag"
+  puts "appu //[word]            ... open the link containing the keyword"
   puts
   abort
 end
@@ -233,8 +234,20 @@ else
   end
   list = guess ARGV[0]
   if list.size == 0
-    if ARGV[0].start_with? "-"
-      listlink target_file, ARGV[0].gsub("-","")
+    if ARGV[0].start_with? "//"
+      # todo filter only body context : seems hard
+      search_term = ARGV[0].gsub("//","")
+      require 'open-uri'
+      File.open(target_file, "r").each do |line|
+        link =  line.split(',')[0]
+        puts "seaching ... #{link[0..30]}.."
+        contents = open(link).read
+        if contents.include? search_term
+          system("open #{link}")
+        end
+      end
+    elsif ARGV[0].start_with? "/"
+      listlink target_file, ARGV[0].gsub("/","")
     else
       help
     end
