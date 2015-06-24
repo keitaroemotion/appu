@@ -16,16 +16,17 @@ STASH_HEAP = 10000
 require 'fileutils'
 target_dir = "/usr/local/etc/appu"
 target_file = "#{target_dir}/stash"
+target_bookmark = "#{target_dir}/bookmark"
 target_todo = "#{target_dir}/todo"
 
 operation = ARGV[0]
 
 def help()
-  line = "=============="
-  tab = "     "
+  line = "==========================================="
+  tab = "                  "
   puts line
   printf tab
-  puts "appu"
+  puts "†appu †  ".cyan
   puts line
   puts "appu list/ls [keyword] ... enlist applications start with the keyword"
   puts "appu         [keyword] ... open the application start with the kw."
@@ -102,6 +103,99 @@ end
 case operation
 when "help"
   help
+
+when "desk"#bookmark
+  # desk [link] [key] (duplicate not allowed)
+  print "Choose operation:\n"+
+        "\t1. register new link (r)\n"+
+        "\t2. show links (s)\n"+
+        "\t3. open link (o)\n"+
+        "\t4. delete link (d)\n"+
+        "\t5. quit (q)\n"+
+        "> "
+
+  def file_to_array(file)
+    arr = Array.new
+    if File.exist? file
+      File.open(file, "r").each do |line|
+        arr.push line
+      end
+    end
+    arr
+  end
+   def file_to_key_array(file)
+     arr = Array.new
+     if File.exist? file
+       File.open(file, "r").each do |line|
+         ls = line.split(',')
+         arr.push ls[1].chomp
+       end
+     end
+     arr
+   end
+
+
+ case $stdin.gets.chomp
+ when "r"
+   print "Enter the url:"
+   url = $stdin.gets.chomp
+   if !url.start_with? "http"
+     url = "http://#{url}"
+   end
+   print "Enter the key:"
+   key = $stdin.gets.chomp
+
+   keys = file_to_key_array(target_bookmark)
+
+   f = File.open(target_bookmark, "a")
+   if keys.include? key
+     puts "the key '#{key}' has already been registered."
+   else
+     f.puts "#{url},#{key}"
+   end
+   f.close
+ when "s"
+   numero = 0
+   file_to_key_array(target_bookmark).each do |key|
+     print "["; print "#{key}".cyan; print "]"
+     if(numero == 5)
+       puts
+     end
+     numero += 1
+   end
+   puts
+ when "d"
+   print "Enter the key to delete: "
+   key = $stdin.gets.chomp
+   copy = Array.new
+   file_to_array(target_bookmark).each do |line|
+     ls = line.split(',')
+     if ls[1].chomp == key
+       print "the key".green
+       print " #{key} ".red
+       print "has been deleted.".green
+       puts
+     else
+       copy.push line
+     end
+   end
+   f = File.open(target_bookmark, "w")
+   copy.each do |line|
+     f.puts line
+   end
+   f.close
+ when "o"
+   print "Enter the key to open: "
+   key = $stdin.gets.chomp
+   file_to_array(target_bookmark).each do |line|
+     ls = line.split(',')
+     if ls[1].chomp == key
+       system("open #{ls[0].chomp}")
+     end
+   end
+ when "q"
+ else
+ end
 when "task", "todo"
   def format(str)
     str = str.to_s
