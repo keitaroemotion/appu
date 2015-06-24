@@ -106,13 +106,20 @@ when "help"
 
 when "desk" # bookmark
   # desk [link] [key] (duplicate not allowed)
-  print "Choose operation:\n"+
+  subop = ""
+
+  if ARGV[1] != nil
+    subop = ARGV[1]
+  else
+    print "Choose operation:\n"+
         "\tr: register new link \n"+
         "\ts: show links        \n"+
         "\to: open link         \n"+
         "\td: delete link       \n"+
         "\tq: quit              \n"+
         "> "
+    subop = $stdin.gets.chomp
+  end
 
   def file_to_array(file)
     arr = Array.new
@@ -147,8 +154,7 @@ def showkeys()
 end
 
 
-
- case $stdin.gets.chomp
+ case subop
  when "r"
    print "Enter the url:"
    url = $stdin.gets.chomp
