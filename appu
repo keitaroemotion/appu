@@ -35,7 +35,7 @@ def help()
   puts "appu rand    (optional:tag)           ... randomly retrieves & opens stashed link"
   puts "appu listlink/ll           ... list all links"
   puts "appu listlink [tag]          ... list all links related to tag"
-  puts "appu listtag/lt            ... list all tags"
+  puts "appu tag/lt            ... list all tags"
   puts "appu /[tag]            ... list links of the tag"
   puts "appu //[word]            ... open the link containing the keyword"
   puts
@@ -80,7 +80,7 @@ end
 case operation
 when "help"
   help
-when "listtag", "lt"
+when "tag", "lt"
   bucket = Array.new
   File.open(target_file, "r").each do |line|
     ls = line.split(',')
@@ -119,6 +119,7 @@ when "rand" #read the olderst and bring it to the top heap
   if ARGV.size == 1
     stack = Array.new
     File.open(target_file, "r").each do |line|
+
       stack.push line
       numero = numero + 1
     end
@@ -247,7 +248,18 @@ else
         end
       end
     elsif ARGV[0].start_with? "/"
-      listlink target_file, ARGV[0].gsub("/","")
+      tag = ARGV[0].gsub("/","")
+      listlink target_file, tag
+      #moomin
+      puts "openere desidero? [Y/n]"
+      ans = $stdin.gets.chomp
+      if ans.downcase == "y"
+        File.open(target_file, "r").each do |line|
+          if ((tag == nil) || tagexists(line, tag))
+            system("open #{line.split(',')[0]}")
+          end
+        end
+      end
     else
       help
     end
