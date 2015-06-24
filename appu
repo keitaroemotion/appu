@@ -38,7 +38,9 @@ def help()
   puts "appu listlink [tag]          ... list all links related to tag"
   puts "appu tag/lt            ... list all tags"
   puts "appu /[tag]            ... list links of the tag"
-  puts "appu taskadd           ... add todo"
+  puts "appu task/todo           ... show todo"
+  puts "appu taskadd/ta           ... add todo"
+  puts "appu taskdel/td           ... delete todo"
   puts "appu //[word]            ... open the link containing the keyword"
   puts
   abort
@@ -100,7 +102,7 @@ end
 case operation
 when "help"
   help
-when "task"
+when "task", "todo"
   def format(str)
     str = str.to_s
     if str.size == 1
