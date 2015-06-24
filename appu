@@ -17,7 +17,7 @@ require 'fileutils'
 target_dir = "/usr/local/etc/appu"
 target_file = "#{target_dir}/stash"
 $target_bookmark = "#{target_dir}/bookmark"
-target_todo = "#{target_dir}/todo"
+$target_todo = "#{target_dir}/todo"
 
 operation = ARGV[0]
 
@@ -39,10 +39,9 @@ def help()
   puts "appu listlink [tag]          ... list all links related to tag"
   puts "appu tag/lt            ... list all tags"
   puts "appu /[tag]            ... list links of the tag"
-  puts "appu task/todo           ... show todo"
-  puts "appu taskadd/ta           ... add todo"
-  puts "appu taskdel/td           ... delete todo"
+  puts "appu todo                ... manage todo"
   puts "appu //[word]            ... open the link containing the keyword"
+  puts "appu desk               ... bookmarking function"
   puts
   abort
 end
@@ -96,6 +95,82 @@ def assign(from, to)
     from = to
   end
   from
+end
+
+def task()
+  def format(str)
+    str = str.to_s
+    if str.size == 1
+      return "0#{str}"
+    else
+      return str
+    end
+  end
+
+  File.open($target_todo, "r").each do |line|
+    ls = line.split(',')
+    (1..ls.size-1).each do |i|
+      print "#{format(ls[i].chomp).green} "
+    end
+    print ls[0]
+    puts
+  end
+end
+
+def taskadd()
+  date = getDateString
+  printf "Text: "
+  text = $stdin.gets.gsub(","," ").gsub("\n","")
+  if text == ""
+    abort "ERROR: you need to input text".red
+  end
+  text =  "#{text},#{date}"
+
+  todos = Array.new
+  if File.exist? $target_todo
+    File.open($target_todo, "r").each do |e|
+      todos.push e.gsub("\n","")
+    end
+  end
+
+  f = File.open($target_todo, "a")
+
+  if todos.include?("#{text}") == false
+    f.puts text
+  else
+    puts "the following data already exists: #{text}"
+  end
+  f.close
+end
+
+def taskdel()
+  date = getDateString
+  print "Enter search word: "
+  search_term = $stdin.gets.chomp
+  if search_term == nil
+    abort
+  end
+  def matches(line, search_term, date)
+    if(line.downcase.start_with?(search_term.downcase))
+      if(line.chomp.end_with?(date))
+        return true
+      end
+    end
+    return false
+  end
+
+  todos = Array.new
+  File.open($target_todo, "r").each do |line|
+    if !matches line, search_term, date
+      todos.push line
+    end
+  end
+  f = File.open($target_todo, "w")
+  todos.each do |e|
+    f.puts e
+    puts e
+  end
+  f.close
 end
 
 
@@ -209,77 +284,40 @@ end
  when "q"
  else
  end
-when "task", "todo"
-  def format(str)
-    str = str.to_s
-    if str.size == 1
-      return "0#{str}"
-    else
-      return str
-    end
-  end
+when "todo"
+  print "Enter the operation:\n"+
+        "\ts: show todos\n"+
+        "\ta: add  todo\n"+
+        "\td: del  todo\n"+
+        ">"
 
-  File.open(target_todo, "r").each do |line|
-    ls = line.split(',')
-    (1..ls.size-1).each do |i|
-      print "#{format(ls[i].chomp).green} "
-    end
-    print ls[0]
-    puts
-  end
-when "taskdel", "tsd"
-  date = getDateString
-  print "Enter search word: "
-  search_term = $stdin.gets.chomp
-  if search_term == nil
-    abort
-  end
-  def matches(line, search_term, date)
-    if(line.downcase.start_with?(search_term.downcase))
-      if(line.chomp.end_with?(date))
-        return true
+  subop = $stdin.gets.chomp
+  def putline()
+    n = 0
+    (1..60).each do |h|
+      if n == 0
+        print "-"
+        n = 1
+      else
+        print "-".red
+        n = 0
       end
     end
-    return false
+    puts
   end
-
-  todos = Array.new
-  File.open(target_todo, "r").each do |line|
-    if !matches line, search_term, date
-      todos.push line
-    end
-  end
-
-  f = File.open(target_todo, "w")
-  todos.each do |e|
-    f.puts e
-    puts e
-  end
-  f.close
-when "taskadd", "tsa"
-  date = getDateString
-  printf "Text: "
-  text = $stdin.gets.gsub(","," ").gsub("\n","")
-  if text == ""
-    abort "ERROR: you need to input text".red
-  end
-  text =  "#{text},#{date}"
-
-  todos = Array.new
-  if File.exist? target_todo
-    File.open(target_todo, "r").each do |e|
-      todos.push e.gsub("\n","")
-    end
-  end
-
-  f = File.open(target_todo, "a")
-
-  if todos.include?("#{text}") == false
-    f.puts text
+  putline
+  case subop
+  when "s"
+    task
+  when "d"
+    task
+    puts
+    taskdel
+  when "a"
+    taskadd
   else
-    puts "the following data already exists: #{text}"
   end
-  f.close
+  putline
 when "tag", "lt"
   bucket = Array.new
   File.open(target_file, "r").each do |line|
