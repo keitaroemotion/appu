@@ -550,7 +550,18 @@ else
       help
     end
   elsif list.size == 1
-    system("open #{list[0].gsub(" ","\\ ")}")
+    puts list
+    puts ARGV[0]
+    list[0] = list[0].gsub(" ","\\ ")
+    if("/applications/#{ARGV[0]}.app" != list[0].downcase)
+      print "You want to open "
+      print list[0].gsub(APP_DIR+"/",'').gsub(".app","").cyan
+      print " ? [Y/n] : "
+      if $stdin.gets.chomp.downcase == "n"
+        abort
+      end
+    end
+    system("open #{list[0]}")
   else
     puts list
   end
