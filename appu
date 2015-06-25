@@ -28,17 +28,16 @@ def help()
   printf tab
   puts "†appu †  ".cyan
   puts line
-  puts "appu list/ls [keyword] ... enlist applications start with the keyword"
   puts "appu         [keyword] ... open the application start with the kw."
   puts "                        if multiple apps found, those are enlisted"
   puts "appu kill    [keyword]  ... kill the application starts with the kw"
   puts "appu web     [keywords] ... "
   puts "appu stash   [link] (optional:[tag])     ... stash link "
   puts "appu link           ... links"
-  puts "appu /[tag]            ... list links of the tag"
   puts "appu todo                ... manage todo"
-  puts "appu //[word]            ... open the link containing the keyword"
   puts "appu book               ... bookmarking function"
+  puts "appu /[tag]            ... list links of the tag"
+  puts "appu //[word]            ... open the link containing the keyword"
   puts
   abort
 end
@@ -473,11 +472,6 @@ when "web", "w" #webfind
     url += "#{ARGV[i]}+"
   end
   system "open #{url+ARGV[li]}"
-when "list", "lis", "li", "ls"
-  if ARGV.size < 2
-    abort "arg size insufficient"
-  end
-  puts guess ARGV[1]
 when "clean" #clean trash
   system("rm -rf ~/.Trash/*")
 when "renamefiles"
@@ -540,20 +534,45 @@ else
   list = guess ARGV[0]
   if list.size == 0
     if ARGV[0].start_with? "//"
+      numero = 0
       # todo filter only body context : seems hard
-      search_term = ARGV[0].gsub("//","")
+      search_terms = Array.new
+      (0 .. ARGV.size-1).each do |i|
+        search_terms.push ARGV[i].gsub("//","")
+      end
+
       require 'open-uri'
       File.open($target_file, "r").each do |line|
         link =  line.split(',')[0]
-        puts "seaching ... #{link[0..30]}.."
+        print "seaching ...".green
+        print " #{link[0..30]}.."
+        puts
         contents = open(link).read
-        if contents.include? search_term
+
+        def term_matches(search_terms, contents)
+          search_terms.each do |term|
+            if contents.include?(term) == false
+              return false
+            end
+          end
+          return true
+        end
+
+        if term_matches(search_terms, contents) == true
           system("open #{link}")
+          numero = numero+1
         end
       end
+      puts
+      if numero == 1
+        puts "1 page have been found.".yellow
+      else
+        puts "#{numero} pages have been found.".yellow
+      end
+      puts
     elsif ARGV[0].start_with? "/"
       tag = ARGV[0].gsub("/","")
-      listlink $target_file, tag
+      listlink tag
       puts "openere desidero? [Y/n]"
       ans = $stdin.gets.chomp
       if ans.downcase == "y"
