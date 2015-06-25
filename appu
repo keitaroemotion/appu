@@ -132,6 +132,7 @@ def task()
     end
     print ls[0]
     puts
+    today = false
   end
 end
 
@@ -285,16 +286,18 @@ end
 
 def bort(msg="")
   print msg.red
-  print ">"
+  print "[#{$GROUND}]> "
   operate $stdin.gets.chomp
 end
 
 #################################################################
 
-# Main
+                          # Main
 
 #################################################################
 
+current_location = ""
+$GROUND = "home"
 def operate(operation)
 
   case operation
@@ -302,7 +305,7 @@ def operate(operation)
     abort
   when "help", "h", "?"
     help
-    print ">"
+    print "[#{$GROUND}]> "
     operate $stdin.gets.chomp
   when "book" # bookmark
     # book [link] [key] (duplicate not allowed)
@@ -317,7 +320,7 @@ def operate(operation)
           "\s\so: open link         \n"+
           "\s\sd: delete link       \n"+
           "\s\sq: quit              \n"+
-          "> "
+          "[book]> "
       subop = $stdin.gets.chomp
     end
 
@@ -426,44 +429,51 @@ def operate(operation)
    else
    end
   when "todo"
-    print "Enter the operation:\n"+
-          "\s\ss: show todos\n"+
-          "\s\sa: add  todo\n"+
-          "\s\sd: del  todo\n"+
-          "\s\sq: quit\n"+
-          ">"
+    def exe_todo()
+      puts
+      print "Enter the operation:\n"+
+            "\s\ss: show todos\n"+
+            "\s\sa: add  todo\n"+
+            "\s\sd: del  todo\n"+
+            "\s\sq: quit\n"+
+            "[todo]> "
 
-    subop = $stdin.gets.chomp
-    def putline()
-      n = 0
-      (1..60).each do |h|
-        if n == 0
-          print "-"
-          n = 1
-        else
-          print "-".red
-          n = 0
+      subop = $stdin.gets.chomp
+      def putline()
+        n = 0
+        (1..60).each do |h|
+          if n == 0
+            print "-"
+            n = 1
+          else
+            print "-".red
+            n = 0
+          end
         end
+        puts
       end
-      puts
+      putline
+      case subop
+      when "q"
+        bort
+      when "s"
+        task
+        exe_todo
+      when "d"
+        task
+        puts
+        taskdel
+        task
+        exe_todo
+      when "a"
+        taskadd
+        exe_todo
+      else
+        exe_todo
+      end
+      putline
     end
-    putline
-    case subop
-    when "q"
-      bort
-    when "s"
-      task
-    when "d"
-      task
-      puts
-      taskdel
-      task
-    when "a"
-      taskadd
-    else
-    end
-    putline
-    bort
+    exe_todo
   when "link", "l"
     def tail()
       print ""
@@ -480,7 +490,7 @@ def operate(operation)
            "\s\srl: remove link\n"+
            "\s\sq : quit\n"+
            "------------------------------\n".green
-           print ">"
+           print "[link]> "
       case $stdin.gets.chomp
       when "q"
 
