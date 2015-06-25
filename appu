@@ -38,7 +38,7 @@ def help()
   puts "appu /[tag]            ... list links of the tag"
   puts "appu todo                ... manage todo"
   puts "appu //[word]            ... open the link containing the keyword"
-  puts "appu desk               ... bookmarking function"
+  puts "appu book               ... bookmarking function"
   puts
   abort
 end
@@ -253,8 +253,8 @@ end
 case operation
 when "help"
   help
-when "desk" # bookmark
-  # desk [link] [key] (duplicate not allowed)
+when "book" # bookmark
+  # book [link] [key] (duplicate not allowed)
   subop = ""
 
   if ARGV[1] != nil
@@ -553,9 +553,10 @@ else
     list[0] = list[0].gsub(" ","\\ ")
     if("/applications/#{ARGV[0]}.app" != list[0].downcase)
       print "You want to open "
-      print list[0].gsub(APP_DIR+"/",'').gsub(".app","").cyan
+      print list[0].gsub(APP_DIR+"/",'').gsub(".app","").gsub("\\","")
+.cyan
       print " ? [Y/n] : "
-      if $stdin.gets.chomp.downcase == "n"
+      if $stdin.gets.chomp.downcase != "y"
         abort
       end
     end
