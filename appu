@@ -15,7 +15,7 @@ end
 STASH_HEAP = 10000
 require 'fileutils'
 target_dir = "/usr/local/etc/appu"
-target_file = "#{target_dir}/stash"
+$target_file = "#{target_dir}/stash"
 $target_bookmark = "#{target_dir}/bookmark"
 $target_todo = "#{target_dir}/todo"
 
@@ -34,10 +34,7 @@ def help()
   puts "appu kill    [keyword]  ... kill the application starts with the kw"
   puts "appu web     [keywords] ... "
   puts "appu stash   [link] (optional:[tag])     ... stash link "
-  puts "appu rand    (optional:tag)           ... randomly retrieves & opens stashed link"
-  puts "appu listlink/ll           ... list all links"
-  puts "appu listlink [tag]          ... list all links related to tag"
-  puts "appu tag/lt            ... list all tags"
+  puts "appu link           ... links"
   puts "appu /[tag]            ... list links of the tag"
   puts "appu todo                ... manage todo"
   puts "appu //[word]            ... open the link containing the keyword"
@@ -72,8 +69,8 @@ def format_link_et_tag(line)
   end
 end
 
-def listlink(target_file, tag)
-  File.open(target_file, "r").each do |line|
+def listlink(tag)
+  File.open($target_file, "r").each do |line|
     if ((tag == nil) || tagexists(line, tag))
       format_link_et_tag(line)
     end
@@ -180,11 +177,78 @@ def taskdel()
   f = File.open($target_todo, "w")
   todos.each do |e|
     f.puts e
-    puts e
   end
+  puts "--------------------------------------------------"
   f.close
 end
 
+def open_rand(tag)
+  filtered = true
+  if tag == ""
+   filtered = false
+  end
+  def open(stack, r)
+    numero = 0
+    stack.each do |line|
+      if (numero == r)
+        system("open #{line.split(',')[0]}")
+      end
+      numero = numero + 1
+    end
+  end
+
+  numero = 0
+  if filtered == false
+    stack = Array.new
+    File.open($target_file, "r").each do |line|
+      stack.push line
+      numero = numero + 1
+    end
+    r =  rand(numero)
+    open stack, r
+  else
+    stack = Array.new
+    File.open($target_file, "r").each do |line|
+      if (tagexists(line, tag))
+        stack.push line
+        numero = numero + 1
+      end
+    end
+    r =  rand(numero)
+    open stack, r
+  end
+end
+
+def list_tags()
+  bucket = Array.new
+  File.open($target_file, "r").each do |line|
+    ls = line.split(',')
+    (1 .. ls.size-1).each do |e|
+      if bucket.include?(ls[e].chomp) == false
+        bucket.push ls[e].chomp
+      end
+    end
+  end
+  counter = 0
+  hor_len = 6
+  bucket.each do |tag|
+    if counter == hor_len
+      puts
+      counter = 0
+    else
+      print "[#{tag.green}]"
+    end
+    counter += 1
+  end
+  puts
+end
+
+
+#################################################################
+
+# Main
+
+#################################################################
 
 case operation
 when "help"
@@ -197,11 +261,11 @@ when "desk" # bookmark
     subop = ARGV[1]
   else
     print "Choose operation:\n"+
-        "\tr: register new link \n"+
-        "\ts: show links        \n"+
-        "\to: open link         \n"+
-        "\td: delete link       \n"+
-        "\tq: quit              \n"+
+        "\s\sr: register new link \n"+
+        "\s\ss: show links        \n"+
+        "\s\so: open link         \n"+
+        "\s\sd: delete link       \n"+
+        "\s\sq: quit              \n"+
         "> "
     subop = $stdin.gets.chomp
   end
@@ -236,8 +300,7 @@ def showkeys()
     numero += 1
   end
   puts
-end
-
+ end
 
  case subop
  when "r"
@@ -296,9 +359,9 @@ end
  end
 when "todo"
   print "Enter the operation:\n"+
-        "\ts: show todos\n"+
-        "\ta: add  todo\n"+
-        "\td: del  todo\n"+
+        "\s\ss: show todos\n"+
+        "\s\sa: add  todo\n"+
+        "\s\sd: del  todo\n"+
         ">"
 
   subop = $stdin.gets.chomp
@@ -323,65 +386,33 @@ when "todo"
     task
     puts
     taskdel
+    task
   when "a"
     taskadd
   else
   end
   putline
-when "tag", "lt"
-  bucket = Array.new
-  File.open(target_file, "r").each do |line|
-    ls = line.split(',')
-    (1 .. ls.size-1).each do |e|
-      if bucket.include?(ls[e].chomp) == false
-        bucket.push ls[e].chomp
-      end
-    end
-  end
-  counter = 0
-  hor_len = 6
-  bucket.each do |tag|
-    if counter == hor_len
-      puts
-      counter = 0
-    else
-      print "[#{tag.green}]"
-    end
-    counter += 1
-  end
-  puts
-when "listlink", "ll"
-  listlink(target_file, ARGV[1])
-when "rand" #read the olderst and bring it to the top heap
-  def open(stack, r)
-    numero = 0
-    stack.each do |line|
-      if (numero == r)
-        system("open #{line.split(',')[0]}")
-      end
-      numero = numero + 1
-    end
-  end
-
-  numero = 0
-  if ARGV.size == 1
-    stack = Array.new
-    File.open(target_file, "r").each do |line|
-      stack.push line
-      numero = numero + 1
-    end
-    r =  rand(numero)
-    open stack, r
+when "link"
+  printf "Your action is:\n"+
+         "\s\sla: list all links\n"+
+         "\s\sor: open random link\n"+
+         "\s\sot: open tag-based random link\n"+
+         "\s\stg: list tags\n"+
+         ">"
+  case $stdin.gets.chomp
+  when "la"
+    listlink(ARGV[1])
+  when "or"
+    open_rand ""
+  when "ot"
+    #todo: list tag
+    print "Enter the tag: "
+    tag = $stdin.gets.chomp
+    open_rand tag
+  when "tg"
+    list_tags
   else
-    stack = Array.new
-    File.open(target_file, "r").each do |line|
-      if (tagexists(line, ARGV[1]))
-        stack.push line
-        numero = numero + 1
-      end
-    end
-    r =  rand(numero)
-    open stack, r
+
   end
 when "stash" #stash web location
   if ARGV.size < 2
@@ -392,8 +423,8 @@ when "stash" #stash web location
 
   arr = Array.new
   counter = 0
-  if File.exist? target_file
-    File.open(target_file, "r").each do |line|
+  if File.exist? $target_file
+    File.open($target_file, "r").each do |line|
       #stash maximum 1000, the olderst eliminated
       if counter < STASH_HEAP
         arr.push line
@@ -402,7 +433,7 @@ when "stash" #stash web location
     end
   end
 
-  f = File.open(target_file, "w")
+  f = File.open($target_file, "w")
     if ARGV.size > 2
       for i in (2 .. ARGV.size-1) do
          link = link + ",#{ARGV[i]}"
@@ -464,18 +495,27 @@ when "kill"
   if ARGV.size < 2
     abort "arg size insufficient"
   end
-  list = guess ARGV[1]
-  if list.size == 1
-    res = %x(ps aux | grep "#{list[0].gsub(" ","\\ ")}")
-    puts "Do you really want #{list[0]} be dead? [Y/n]"
-    ans = $stdin.gets.chomp
-    if (ans.downcase == "y")
-      system("kill #{res.split(' ')[1]}")
+
+  def kill(term)
+    list = guess term
+    if list.size == 1
+      res = %x(ps aux | grep "#{list[0].gsub(" ","\\ ")}")
+      whoami = %x(whoami).chomp
+      puts "Do you really want #{list[0]} be dead? [Y/n]"
+      ans = $stdin.gets.chomp
+      if (ans.downcase == "y")
+        res.split(whoami).each do |l|
+          if (!l.include? "grep")
+            system ("kill #{l.split(' ')[0].chomp}")
+          end
+        end
+      else
+      end
     else
+      puts list
     end
-  else
-    puts list
   end
+  kill ARGV[1]
 else
   if ARGV.size == 0
     help
@@ -486,7 +526,7 @@ else
       # todo filter only body context : seems hard
       search_term = ARGV[0].gsub("//","")
       require 'open-uri'
-      File.open(target_file, "r").each do |line|
+      File.open($target_file, "r").each do |line|
         link =  line.split(',')[0]
         puts "seaching ... #{link[0..30]}.."
         contents = open(link).read
@@ -496,11 +536,11 @@ else
       end
     elsif ARGV[0].start_with? "/"
       tag = ARGV[0].gsub("/","")
-      listlink target_file, tag
+      listlink $target_file, tag
       puts "openere desidero? [Y/n]"
       ans = $stdin.gets.chomp
       if ans.downcase == "y"
-        File.open(target_file, "r").each do |line|
+        File.open($target_file, "r").each do |line|
           if ((tag == nil) || tagexists(line, tag))
             system("open #{line.split(',')[0]}")
           end
