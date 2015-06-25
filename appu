@@ -345,6 +345,7 @@ def showkeys()
    end
    f.close
  when "o"
+   opened = false
    showkeys
    print "Enter the key to open: "
    key = $stdin.gets.chomp
@@ -352,6 +353,22 @@ def showkeys()
      ls = line.split(',')
      if ls[1].chomp == key
        system("open #{ls[0].chomp}")
+       opened = true
+     end
+   end
+   if opened == false
+     file_to_array($target_bookmark).each do |line|
+       ls = line.split(',')
+       if ls[1].chomp.start_with? key
+         print "Do you want to open "
+         print ls[1].chomp.green
+         print " ("
+         print "#{ls[0].chomp.yellow}"
+         print ") ? [Y/n]"
+         if $stdin.gets.chomp.downcase == "y"
+           system("open #{ls[0].chomp}")
+         end
+       end
      end
    end
  when "q"
