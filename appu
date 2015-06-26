@@ -40,15 +40,18 @@ def help()
   printf tab
   puts "†appu †  ".cyan
   puts line
-  puts "appu         [keyword] ... open the application start with the kw."
-  puts "                        if multiple apps found, those are enlisted"
-  puts "appu kill    [keyword]  ... kill the application starts with the kw"
-  puts "appu web     [keywords] ... "
-  puts "appu [link|l]           ... links"
-  puts "appu todo                ... manage todo"
-  puts "appu book               ... bookmarking function"
-  puts "appu /[tag]            ... list links of the tag"
-  puts "appu //[word]            ... open the link containing the keyword"
+  def puts_c(a,b)
+    printf a.green
+    printf b
+    puts
+  end
+  puts_c "open           ", " ... open the application start with the kw."
+  puts_c "kill [keyword] ", " ... kill the application starts with the kw"
+  puts_c "web            ", " ... search with browser "
+  puts_c "link or l      ", " ... links"
+  puts_c "todo           ", " ... manage todo"
+  puts_c "book           ", " ... bookmarking function"
+  puts_c "//             ", " ... open the link containing the keyword"
   puts
 end
 
@@ -337,12 +340,31 @@ end
 current_location = ""
 $GROUND = "home"
 def operate(operation)
-
   case operation
   when "qq"
     abort
   when "q"
     abort
+  when "open"
+    printf "Enter application name: "
+    term = $stdin.gets.chomp
+    list = guess term
+    if list.size == 0
+    elsif list.size == 1
+      list[0] = list[0].gsub(" ","\\ ")
+      if("/applications/#{term}.app" != list[0].downcase)
+        print "You want to open "
+        print list[0].gsub(APP_DIR+"/",'').gsub(".app","").gsub("\\","")
+  .cyan
+        print " ? [Y/n] : "
+        if $stdin.gets.chomp.downcase != "y"
+          bort
+        end
+      end
+      system("open #{list[0]}")
+    else
+      puts list
+    end
   when "help", "h", "?"
     help
     print "[#{$GROUND}]> "
@@ -526,21 +548,21 @@ def operate(operation)
     def show_linkmenu()
       puts "----------------------------".green
       printf "Your action is:\n"+
-           "\s\sla: list all links\n"+
-           "\s\sad: add link\n"+
-           "\s\sor: open random link\n"+
-           "\s\sot: open tag-based random link\n"+
-           "\s\stg: list tags\n"+
-           "\s\srl: remove link\n"+
+           "\s\sl: list all links\n"+
+           "\s\sa: add link\n"+
+           "\s\sx: open random link\n"+
+           "\s\so: open tag-based random link\n"+
+           "\s\st: list tags\n"+
+           "\s\sr: remove link\n"+
            "\s\sq : quit\n"+
            "------------------------------\n".green
            print "[link]> "
-      case $stdin.gets.chomp
+      case $stdin.gets.chomp.strip
       when "q"
         bort
       when "qq"
         abort
-      when "rl"
+      when "r"
         lines = Array.new
         flag = 0
         File.open($target_file,"r").each do |line|
@@ -591,11 +613,11 @@ def operate(operation)
         f.close
         tail
         show_linkmenu
-      when "la"
+      when "l"
         listlink(ARGV[1])
         tail
         show_linkmenu
-      when "ad"
+      when "a"
         def addlink()
           print "url: "
           urllink = $stdin.gets.chomp
@@ -622,18 +644,18 @@ def operate(operation)
         addlink()
         tail
         show_linkmenu
-      when "or"
+      when "x"
         open_rand ""
         tail
         show_linkmenu
-      when "ot"
+      when "o"
         #todo: list tag
         print "Enter the tag: "
         tag = $stdin.gets.chomp
         open_rand tag
         tail
         show_linkmenu
-      when "tg"
+      when "t"
         list_tags
         tail
         show_linkmenu
@@ -706,13 +728,10 @@ def operate(operation)
       end
     end
     kill ARGV[1]
-  when "/"
   when "//"
+    puts "//".yellow
   else
 =begin
-    if ARGV.size == 0
-      help
-    end
     list = guess ARGV[0]
     if list.size == 0
       if ARGV[0].start_with? "//"
@@ -788,3 +807,4 @@ def operate(operation)
 end
 
 operate operation
+
