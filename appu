@@ -45,12 +45,12 @@ def help()
     printf b
     puts
   end
-  puts_c "open           ", " ... open the application start with the kw."
-  puts_c "kill [keyword] ", " ... kill the application starts with the kw"
-  puts_c "web            ", " ... search with browser "
+  puts_c "open or o      ", " ... open the application start with the kw."
+  puts_c "kill or k      ", " ... kill the application starts with the kw"
+  puts_c "web  or w      ", " ... search with browser "
   puts_c "link or l      ", " ... links"
-  puts_c "todo           ", " ... manage todo"
-  puts_c "book           ", " ... bookmarking function"
+  puts_c "todo or t      ", " ... manage todo"
+  puts_c "book or b      ", " ... bookmarking function"
   puts_c "//             ", " ... open the link containing the keyword"
   puts
 end
@@ -345,7 +345,7 @@ def operate(operation)
     abort
   when "q"
     abort
-  when "open"
+  when "open", "o"
     printf "Enter application name: "
     term = $stdin.gets.chomp
     list = guess term
@@ -369,7 +369,7 @@ def operate(operation)
     help
     print "[#{$GROUND}]> "
     operate $stdin.gets.chomp
-  when "book" # bookmark
+  when "book", "b"  # bookmark
     # book [link] [key] (duplicate not allowed)
     subop = ""
 
@@ -492,7 +492,7 @@ def operate(operation)
      abort
    else
    end
-  when "todo"
+  when "todo", "t"
     def exe_todo()
       puts
       print "Enter the operation:\n"+
@@ -668,7 +668,6 @@ def operate(operation)
   when "web", "w" #webfind
     url = "https://www.google.co.jp/search?q="
 
-
     get_args("Enter search words:").each do |word|
       url += "#{word}+"
     end
@@ -703,7 +702,7 @@ def operate(operation)
     end
     command += "~/.Trash"
     system(command)
-  when "kill"
+  when "kill", "k"
     if ARGV.size < 2
       bort "arg size insufficient"
     end
@@ -729,7 +728,49 @@ def operate(operation)
     end
     kill ARGV[1]
   when "//"
-    puts "//".yellow
+      search_terms = get_args "Enter keywords:"
+      numero = 0
+
+      require 'open-uri'
+      lc = 0
+      data = Array.new
+      File.open($target_file, "r").each do |line|
+       data.push line
+       lc += 1
+      end
+      puts
+
+      dc = 0
+      data.each do |line|
+        link =  line.split(',')[0]
+        print "seaching ...".green
+        print " #{link[0..30]}..".cyan
+        print "\t[#{dc}/#{lc}]"
+        print "\r"
+        contents = open(link).read
+
+        def term_matches(search_terms, contents)
+          search_terms.each do |term|
+            if contents.include?(term) == false
+              return false
+            end
+          end
+          return true
+        end
+
+        if term_matches(search_terms, contents) == true
+          system("open #{link}")
+          numero = numero+1
+        end
+        dc += 1
+      end
+      puts
+      if numero == 1
+        puts "1 page have been found.".yellow
+      else
+        puts "#{numero} pages have been found.".yellow
+      end
+      puts
   else
 =begin
     list = guess ARGV[0]
