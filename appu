@@ -54,6 +54,7 @@ def help()
   puts_c "//             ", " ... open the link containing the keyword"
   puts_c "q              ", " ... if at home, quit app and else go back home"
   puts_c "qq              ", "... force to quit application"
+  puts_c "help or h       ", "... help menu"
   puts
 end
 
