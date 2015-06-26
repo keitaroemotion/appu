@@ -113,18 +113,57 @@ def task()
     end
   end
 
+
+
   t = Time.now
   date = "#{t.year},#{t.month},#{t.day}"
-  today = false
+  today_date = Time.now
   # actually putting in and comparing date obj is the most effective way...
+
   File.open($target_todo, "r").each do |line|
+
+    def get_date(ls)
+      year  =  ls[1].chomp
+      month =  ls[2].chomp
+      day   =  ls[3].chomp
+      Time.new year, month, day
+    end
+
     ls = line.split(',')
-    if line.chomp.end_with? date.chomp
-      today = true
+    haec_time = get_date(ls)
+
+    def left_older(old, new) #
+      yd = new.year - old.year
+      if yd > 0
+        return 0 # true
+      elsif yd < 0
+        return 1 # false
+      else
+        # could be equal : -1
+      end
+      md = new.month - old.month
+      if md > 0
+        return 0 # true
+      elsif md < 0
+        return 1 # false
+      else
+        # could be equal : -1
+      end
+      dd = new.day - old.day
+      if dd > 0
+        return 0
+      elsif dd < 0
+        return 1
+      else
+        return -1
+      end
     end
 
     (1..ls.size-1).each do |i|
-      if today == false
+      compared_res = left_older(haec_time, today_date)
+      if compared_res == 0
+        print "#{format(ls[i].chomp).blue} "
+      elsif compared_res == 1
         print "#{format(ls[i].chomp).green} "
       else
         print "#{format(ls[i].chomp).red} "
@@ -132,7 +171,6 @@ def task()
     end
     print ls[0]
     puts
-    today = false
   end
 end
 
@@ -301,6 +339,8 @@ $GROUND = "home"
 def operate(operation)
 
   case operation
+  when "qq"
+    abort
   when "q"
     abort
   when "help", "h", "?"
@@ -426,6 +466,8 @@ def operate(operation)
        end
      end
    when "q"
+   when "qq"
+     abort
    else
    end
   when "todo"
@@ -456,6 +498,8 @@ def operate(operation)
       case subop
       when "q"
         bort
+      when "qq"
+        abort
       when "s"
         task
         exe_todo
@@ -493,8 +537,9 @@ def operate(operation)
            print "[link]> "
       case $stdin.gets.chomp
       when "q"
-
         bort
+      when "qq"
+        abort
       when "rl"
         lines = Array.new
         flag = 0
