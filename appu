@@ -65,6 +65,13 @@ def tagexists(line, tag)
   return  (lsp.include?("#{tag}\n")) || (lsp.include?(tag))
 end
 
+def file_read(file)
+  if !File.exist? file
+    system("touch #{file}")
+  end
+  return File.open(file, "r").each_line
+end
+
 def format_link_et_tag(line)
   lsp = line.split(',')
   limit = 60
@@ -85,7 +92,7 @@ def format_link_et_tag(line)
 end
 
 def listlink(tag)
-  File.open($target_file, "r").each do |line|
+  file_read($target_file).each do |line|
     if ((tag == nil) || tagexists(line, tag))
       format_link_et_tag(line)
     end
@@ -125,8 +132,10 @@ def task()
   date = "#{t.year},#{t.month},#{t.day}"
   today_date = Time.now
   # actually putting in and comparing date obj is the most effective way...
+  
 
-  File.open($target_todo, "r").each do |line|
+  file_read($target_todo).each do |line|
+  #File.open($target_todo, "r").each do |line|
 
     def get_date(ls)
       year  =  ls[1].chomp
@@ -568,7 +577,8 @@ def operate(operation)
       when "r"
         lines = Array.new
         flag = 0
-        File.open($target_file,"r").each do |line|
+        file_read($target_file).each do |line|
+        #File.open($target_file,"r").each do |line|
 
           def ask_line_of_deletion(line)
             print "You wanna remove this link?:\n"
