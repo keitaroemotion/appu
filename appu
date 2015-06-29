@@ -8,12 +8,12 @@ require '/usr/local/etc/appu/lib/search'
 require '/usr/local/etc/appu/lib/web'
 require '/usr/local/etc/appu/lib/process'
 require '/usr/local/etc/appu/lib/filex'
+require '/usr/local/etc/appu/lib/alias'
+require '/usr/local/etc/appu/lib/memo'
 require 'fileutils'
 require 'colorize'
 
-
 #todo
-  # alias anytime
   # memo (tag-based)
 
 operation = ARGV[0]
@@ -21,6 +21,8 @@ current_location = ""
 
 def operate(operation)
   case operation
+  when "alias", "a"
+    exe_alias
   when "qq"
     abort
   when "q"
@@ -48,7 +50,17 @@ def operate(operation)
   when "//"
     exe_search
   else
-    help
+    accusative = operation
+    if (accusative != nil) && (accusative != "")
+      #1st, look alias(auto)
+      accusative = accusative.chomp
+      if file_to_map($target_alias).keys.include? accusative
+        system file_to_map($target_alias)[accusative]
+      elsif
+        exe_open_kid accusative.chomp
+      end
+    end
+    home
   end
   bort
 end

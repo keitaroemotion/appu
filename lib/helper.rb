@@ -1,9 +1,49 @@
+def cputs(text, color="")
+  case color
+  when $CYAN
+    puts text.cyan
+  when $GREEN
+    puts text.green
+  when $RED
+    puts text.red
+  when $YELLOW
+    puts text.yellow
+  else
+    puts text
+  end
+end
+
+def makefile(file)
+  if File.exist?(file) == false
+    system("touch #{file}")
+  end
+end
+
+def show_home(area)
+  print "["
+  print area.yellow
+  print "]"
+end
+
+
 def exe_help()
   help
   print "[#{$GROUND}]> "
   operate $stdin.gets.chomp
 end
 
+def file_to_map(file)
+  hash = Hash.new
+  if File.exist? file
+    File.open(file, "r").each do |line|
+      if line.include? ','
+        ls = line.split(',')
+        hash[ls[0]] = ls[1].gsub("\n","")
+      end
+    end
+  end
+  hash
+end
 
 def file_to_array(file)
   arr = Array.new
@@ -44,8 +84,8 @@ end
 
 def guess(key)
   list = Array.new
-  Dir["#{APP_DIR}/*"].each do |app|
-    if app.gsub("#{APP_DIR}/","").gsub("\ ","").downcase.start_with? key.downcase
+  Dir["#{$APP_DIR}/*"].each do |app|
+    if app.gsub("#{$APP_DIR}/","").gsub("\ ","").downcase.start_with? key.downcase
       list.push app
     end
   end
@@ -98,6 +138,8 @@ def bort(msg="")
   operate chomp()
 end
 
+def home()
+end
 
 def help()
   line = "==========================================="
@@ -118,6 +160,7 @@ def help()
   puts_c "todo or t      ", " ... manage todo"
   puts_c "book or b      ", " ... bookmarking function"
   puts_c "//             ", " ... open the link containing the keyword"
+  puts_c "alias or a            ", " ... alias"
   puts_c "q              ", " ... if at home, quit app and else go back home"
   puts_c "qq              ", "... force to quit application"
   puts_c "help or h       ", "... help menu"

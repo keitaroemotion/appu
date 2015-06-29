@@ -1,13 +1,11 @@
-def exe_open()
-  printf "Enter application name: "
-  term = $stdin.gets.chomp
+def exe_open_kid(term)
   list = guess term
   if list.size == 0
   elsif list.size == 1
     list[0] = list[0].gsub(" ","\\ ")
     if("/applications/#{term}.app" != list[0].downcase)
       print "You want to open "
-      print list[0].gsub(APP_DIR+"/",'').gsub(".app","").gsub("\\","").cyan
+      print list[0].gsub($APP_DIR+"/",'').gsub(".app","").gsub("\\","").cyan
       print " ? [Y/n] : "
       if $stdin.gets.chomp.downcase != "y"
         bort
@@ -17,6 +15,12 @@ def exe_open()
   else
     puts list
   end
+end
+
+def exe_open()
+  printf "Enter application name: "
+  term = $stdin.gets.chomp
+  exe_open_kid term
 end
 
 
