@@ -1,7 +1,12 @@
 #!/usr/bin/env ruby
 
+
+require '/usr/local/etc/appu/lib/helper.rb'
+
+
 APP_DIR = "/Applications"
 $COMMA = ','
+
 def guess(key)
   list = Array.new
   Dir["#{APP_DIR}/*"].each do |app|
@@ -12,51 +17,22 @@ def guess(key)
   list
 end
 
+#todo
+  # alias anytime
+  # memo (tag-based)
+  # make it module
+
+
 STASH_HEAP = 10000
 require 'fileutils'
 $target_dir = "/usr/local/etc/appu"
+$target_lib = "#{$target_dir}/lib"
 $target_file = "#{$target_dir}/stash"
 $target_bookmark = "#{$target_dir}/bookmark"
 $target_todo = "#{$target_dir}/todo"
 
 operation = ARGV[0]
 
-def get_args(msg)
-  printf "#{msg} "
-  arr = Array.new
-  $stdin.gets.chomp.split(' ').each do |e|
-    arr.push e
-  end
-  if arr.size == 0
-    bort "ERROR: argument non sufficient"
-  end
-  arr
-end
-
-def help()
-  line = "==========================================="
-  tab = "                  "
-  puts line
-  printf tab
-  puts "†appu †  ".cyan
-  puts line
-  def puts_c(a,b)
-    printf a.green
-    printf b
-    puts
-  end
-  puts_c "open or o      ", " ... open the application start with the kw."
-  puts_c "kill or k      ", " ... kill the application starts with the kw"
-  puts_c "web  or w      ", " ... search with browser "
-  puts_c "link or l      ", " ... links"
-  puts_c "todo or t      ", " ... manage todo"
-  puts_c "book or b      ", " ... bookmarking function"
-  puts_c "//             ", " ... open the link containing the keyword"
-  puts_c "q              ", " ... if at home, quit app and else go back home"
-  puts_c "qq              ", "... force to quit application"
-  puts_c "help or h       ", "... help menu"
-  puts
-end
 
 require 'colorize'
 
@@ -328,11 +304,6 @@ def stash_link(link, tags)
   f.close
 end
 
-def bort(msg="")
-  print msg.red
-  print "[#{$GROUND}]> "
-  operate $stdin.gets.chomp
-end
 
 #################################################################
 
@@ -341,7 +312,6 @@ end
 #################################################################
 
 current_location = ""
-$GROUND = "home"
 def operate(operation)
   case operation
   when "qq"
@@ -670,7 +640,6 @@ def operate(operation)
     show_linkmenu
   when "web", "w" #webfind
     url = "https://www.google.co.jp/search?q="
-
     get_args("Enter search words:").each do |word|
       url += "#{word}+"
     end
@@ -706,30 +675,10 @@ def operate(operation)
     command += "~/.Trash"
     system(command)
   when "kill", "k"
-    if ARGV.size < 2
-      bort "arg size insufficient"
+    require '/usr/local/etc/appu/lib/process'
+    get_args("Enter the app name to kill:").each do |proc|
+      kill proc
     end
-
-    def kill(term)
-      list = guess term
-      if list.size == 1
-        res = %x(ps aux | grep "#{list[0].gsub(" ","\\ ")}")
-        whoami = %x(whoami).chomp
-        puts "Do you really want #{list[0]} be dead? [Y/n]"
-        ans = $stdin.gets.chomp
-        if (ans.downcase == "y")
-          res.split(whoami).each do |l|
-            if (!l.include? "grep")
-              system ("kill #{l.split(' ')[0].chomp}")
-            end
-          end
-        else
-        end
-      else
-        puts list
-      end
-    end
-    kill ARGV[1]
   when "//"
       search_terms = get_args "Enter keywords:"
       numero = 0

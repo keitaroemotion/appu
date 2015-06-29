@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
 mkdir -p /usr/local/etc/appu
+mkdir -p /usr/local/etc/appu/lib
 cp ./appu /usr/local/bin/appu
+cp ./lib/helper.rb /usr/local/etc/appu/lib/
+cp ./lib/const.rb /usr/local/etc/appu/lib/
+cp ./lib/process.rb /usr/local/etc/appu/lib/
 
