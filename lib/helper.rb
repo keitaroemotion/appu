@@ -1,3 +1,13 @@
+def guess(key)
+  list = Array.new
+  Dir["#{APP_DIR}/*"].each do |app|
+    if app.gsub("#{APP_DIR}/","").gsub("\ ","").downcase.start_with? key.downcase
+      list.push app
+    end
+  end
+  list
+end
+
 def chomp()
   res = $stdin.gets
   if res != nil
