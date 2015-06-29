@@ -20,8 +20,16 @@ operation = ARGV[0]
 current_location = ""
 
 def operate(operation)
+
+  if operation != nil
+    args = operation.split(' ')
+    operation = args[0]
+    if operation != nil
+      operation = operation.strip
+    end
+  end
   case operation
-  when "alias", "a"
+  when "a"
     exe_alias
   when "qq"
     abort
@@ -36,7 +44,9 @@ def operate(operation)
   when "todo", "t"
     exe_todo
   when "link", "l"
-    show_linkmenu
+    #このうしろタグがあればかってに空く仕様だと魅力
+    #if additional arg tag = listtag
+    show_linkmenu args[1]
   when "web", "w" #webfind
     exe_web
   when "clean" #clean trash
@@ -52,12 +62,18 @@ def operate(operation)
   else
     accusative = operation
     if (accusative != nil) && (accusative != "")
-      #1st, look alias(auto)
-      accusative = accusative.chomp
-      if file_to_map($target_alias).keys.include? accusative
-        system file_to_map($target_alias)[accusative]
-      elsif
-        exe_open_kid accusative.chomp
+      if accusative == "alias"
+        puts
+        show_all_alias
+        puts
+      else
+        #1st, look alias(auto)
+        accusative = accusative.chomp
+        if file_to_map($target_alias).keys.include? accusative
+          system file_to_map($target_alias)[accusative]
+        elsif
+          exe_open_kid accusative.chomp
+        end
       end
     end
     home

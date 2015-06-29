@@ -1,38 +1,48 @@
-def show_linkmenu()
-  print_linkmenu
-  case $stdin.gets.chomp.strip
-  when "q"
-    bort
-  when "qq"
-    abort
-  when "r"
-    rm_link
-  when "l"
-    listlink(ARGV[1])
-    tail
-    show_linkmenu
-  when "a"
-    addlink()
-    tail
-    show_linkmenu
-  when "x"
-    open_rand ""
-    tail
-    show_linkmenu
-  when "o"
-    #todo: list tag
-    print "Enter the tag: "
-    tag = $stdin.gets.chomp
-    open_rand tag
-    tail
-    show_linkmenu
-  when "t"
-    list_tags
-    tail
-    show_linkmenu
+def show_linkmenu(oper, location_flag=false)
+  if location_flag == true
+    home
   else
-    tail
-    show_linkmenu
+    if oper == nil
+      print_linkmenu
+      oper = $stdin.gets.chomp.strip
+    else
+      location_flag = true
+    end
+
+    case oper
+    when "q"
+      bort
+    when "qq"
+      abort
+    when "r"
+      rm_link
+    when "l"
+      listlink(ARGV[1])
+      #tail
+      show_linkmenu nil, location_flag
+    when "a"
+      addlink()
+      tail
+      show_linkmenu nil, location_flag
+    when "x"
+      open_rand ""
+      tail
+      show_linkmenu nil, location_flag
+    when "o"
+      #todo: list tag
+      print "Enter the tag: "
+      tag = $stdin.gets.chomp
+      open_rand tag
+      tail
+      show_linkmenu nil, location_flag
+    when "t"
+      list_tags
+      #tail
+      show_linkmenu nil, location_flag
+    else
+      tail
+      show_linkmenu nil, location_flag
+    end
   end
 end
 

@@ -50,6 +50,13 @@ def alt_key()
   end
   return newkey
 end
+
+def show_all_alias()
+  file_to_map($target_alias).each do |elem|
+    cputs "[#{elem[0]}] #{elem[1]}", $YELLOW
+  end
+end
+
 def alias_dispatched()
   print "keys:[k] links:[l] all:[a] quit:[q]?: "
   res = $stdin.gets.chomp
@@ -59,9 +66,7 @@ def alias_dispatched()
   when $COMM_BACK
     exe_alias
   when "a"
-    file_to_map($target_alias).each do |elem|
-      cputs "[#{elem[0]}] #{elem[1]}", $YELLOW
-    end
+    show_all_alias
     alias_dispatched
   when "l"
     puts_alias_show_content 1, false , $GREEN
