@@ -1,3 +1,47 @@
+def exe_help()
+  help
+  print "[#{$GROUND}]> "
+  operate $stdin.gets.chomp
+end
+
+
+def file_to_array(file)
+  arr = Array.new
+  if File.exist? file
+    File.open(file, "r").each do |line|
+      arr.push line
+    end
+  end
+  arr
+end
+
+def file_to_key_array(file)
+  arr = Array.new
+  if File.exist? file
+    File.open(file, "r").each do |line|
+      ls = line.split(',')
+      arr.push ls[1].chomp
+    end
+  end
+  arr
+end
+
+
+
+def assign(from, to)
+  if from == ""
+    from = to
+  end
+  from
+end
+
+
+def tagexists(line, tag)
+  lsp = line.split(',')
+  return  (lsp.include?("#{tag}\n")) || (lsp.include?(tag))
+end
+
+
 def guess(key)
   list = Array.new
   Dir["#{APP_DIR}/*"].each do |app|
@@ -48,7 +92,9 @@ require '/usr/local/etc/appu/lib/const.rb'
 
 def bort(msg="")
   print msg.red
-  print "\n[#{$GROUND}]> "
+  print "["
+  print "#{$GROUND}".yellow
+  print "]> "
   operate chomp()
 end
 
@@ -75,6 +121,5 @@ def help()
   puts_c "q              ", " ... if at home, quit app and else go back home"
   puts_c "qq              ", "... force to quit application"
   puts_c "help or h       ", "... help menu"
-  puts
 end
 

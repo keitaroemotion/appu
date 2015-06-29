@@ -20,3 +20,10 @@ def kill(term)
   end
 end
 
+
+def exe_kill()
+  get_args("Enter the app name to kill:").each do |proc|
+    kill proc
+  end
+end
+
