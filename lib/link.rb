@@ -17,7 +17,7 @@ def show_linkmenu(oper, location_flag=false)
     when "r"
       rm_link
     when "l"
-      listlink(ARGV[1])
+      listlink()
       #tail
       show_linkmenu nil, location_flag
     when "a"
@@ -35,12 +35,14 @@ def show_linkmenu(oper, location_flag=false)
       open_rand tag
       tail
       show_linkmenu nil, location_flag
-    when "t"
+    when "t", "tag"
       list_tags
       #tail
       show_linkmenu nil, location_flag
     else
-      tail
+      # this time, rand open per tag
+      # regard oper as tag
+      open_rand oper
       show_linkmenu nil, location_flag
     end
   end
@@ -225,7 +227,7 @@ def format_link_et_tag(line)
   end
 end
 
-def listlink(tag)
+def listlink(tag=nil)
   File.open($target_file, "r").each do |line|
     if ((tag == nil) || tagexists(line, tag))
       format_link_et_tag(line)
