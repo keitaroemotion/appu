@@ -86,7 +86,7 @@ def addlink()
     print ":q = quit , Enter: = next\n> "
     case $stdin.gets.chomp
     when "q"
-     show_linkmenu
+     show_linkmenu "q"
     when ""
      addlink
     else
@@ -183,7 +183,7 @@ def stash_link(link, tags)
   if File.exist? $target_file
     File.open($target_file, "r").each do |line|
       #stash maximum 1000, the olderst eliminated
-      if counter < STASH_HEAP
+      if counter < $STASH_HEAP
         arr.push line
       end
       counter = counter + 1
