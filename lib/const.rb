@@ -2,6 +2,7 @@ $GROUND = "home"
 
 $target_dir = "/usr/local/etc/appu"
 $target_lib = "#{$target_dir}/lib"
+$target_bin = "/usr/local/bin"
 $target_alias = "#{$target_dir}/alias"
 $target_memo = "#{$target_dir}/memo"
 $target_file = "#{$target_dir}/stash"

@@ -50,11 +50,13 @@ def showkeys()
 end
 
 
-def openbook()
+def openbook(key = nil)
   opened = false
-  showkeys
-  print "Enter the key to open: "
-  key = $stdin.gets.chomp
+  if key == nil
+    showkeys
+    print "Enter the key to open: "
+    key = $stdin.gets.chomp
+  end
   file_to_array($target_bookmark).each do |line|
     ls = line.split(',')
     if ls[1].chomp == key

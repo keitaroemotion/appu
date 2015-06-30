@@ -153,11 +153,11 @@ def help()
     printf b
     puts
   end
-  puts_c "open or o      ", " ... open the application start with the kw."
   puts_c "kill or k      ", " ... kill the application starts with the kw"
   puts_c "web  or w      ", " ... search with browser "
   puts_c "link or l      ", " ... links"
   puts_c "todo or t      ", " ... manage todo"
+  puts_c "blist or bl      ", " ... show bookmark keys"
   puts_c "book or b      ", " ... bookmarking function"
   puts_c "//             ", " ... open the link containing the keyword"
   puts_c "a            ", "   ... alias menu"
