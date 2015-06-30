@@ -3,32 +3,40 @@ def exe_search()
   numero = 0
 
   require 'open-uri'
-  lc = 0.0
   data = Array.new
   File.open($target_file, "r").each do |line|
    data.push line
-   lc += 1
   end
-  puts
 
   progress = 0.0
   bar_max = 60.0
-  print "seaching ...".green
 
-  s = 0.0 #total stack
+  lc = data.size
 
   data.each do |line|
     link =  line.split(',')[0]
     #print "seaching ...".green
     #print " #{link[0..30]}..".cyan
-    print "#{((bar_max * progress/lc) - s)}\r"
-    if ((bar_max * progress/lc) - s) < 0
-      print "="
-      s += 1
+    pr = (bar_max * progress/lc).to_i # progress rate
+
+    print "["
+    (0..pr).each do |i|
+      print "=".green
+    end
+    (0..(bar_max-pr)).each do |i|
+      print "=".red
+    end
+    print "]"
+    print "#{(progress/lc*100).to_i}% \r "
+    def openlink(link)
+      begin
+        return open(link).read
+      rescue
+        return ""
+      end
     end
 
-    #print "\r"
-    contents = open(link).read
+    contents = openlink(link)
 
     def term_matches(search_terms, contents)
       search_terms.each do |term|
@@ -45,12 +53,19 @@ def exe_search()
     end
     progress += 1
   end
+
+  print "["
+  (0..bar_max).each do |i|
+    print "=".green
+  end
+  print "]"
+  print "100%"
+
   puts
   if numero == 1
     puts "1 page have been found.".yellow
   else
     puts "#{numero} pages have been found.".yellow
   end
-  puts
 end
 
