@@ -7,6 +7,7 @@ $target_memo = "#{$target_dir}/memo"
 $target_file = "#{$target_dir}/stash"
 $target_bookmark = "#{$target_dir}/bookmark"
 $target_todo = "#{$target_dir}/todo"
+$target_webcash = "#{$target_dir}/webcash"
 $COMMA = ','
 $APP_DIR = "/Applications"
 $STASH_HEAP = 10000
