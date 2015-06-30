@@ -157,11 +157,14 @@ def help()
   puts_c "web  or w      ", " ... search with browser "
   puts_c "link or l      ", " ... links"
   puts_c "todo or t      ", " ... manage todo"
-  puts_c "blist or bl      ", " ... show bookmark keys"
   puts_c "book or b      ", " ... bookmarking function"
   puts_c "//             ", " ... open the link containing the keyword"
   puts_c "a            ", "   ... alias menu"
-  puts_c "alias            ", "   ... show all alias"
+  puts   "------------------------------------------------------".blue
+  puts_c "al             ", "   ... show all alias"
+  puts_c "bl             ", " ... show bookmark keys"
+  puts_c "lt             ", " ... show link tags"
+  puts   "------------------------------------------------------".blue
   puts_c "q              ", " ... if at home, quit app and else go back home"
   puts_c "qq              ", "... force to quit application"
   puts_c "help or h       ", "... help menu"

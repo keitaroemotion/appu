@@ -56,6 +56,8 @@ def operate(operation)
       #このうしろタグがあればかってに空く仕様だと魅力
       #if additional arg tag = listtag
       show_linkmenu args[1]
+    when "lt"
+      list_tags
     when "web", "w" #webfind
       exe_web
     when "clean" #clean trash
@@ -74,7 +76,7 @@ def operate(operation)
     else
       accusative = operation
       if (accusative != nil) && (accusative != "")
-        if accusative == "alias"
+        if accusative == "al"
           puts
           show_all_alias
           puts
@@ -85,6 +87,8 @@ def operate(operation)
             system file_to_map($target_alias)[accusative]
           elsif file_to_map($target_bookmark).values.include? accusative
             openbook accusative
+          elsif file_to_map($target_file).values.include? accusative
+            open_rand accusative
           elsif
             exe_open_kid accusative.chomp
           end
