@@ -156,6 +156,8 @@ def help()
   puts_c "kill or k      ", " ... kill the application starts with the kw"
   puts_c "web  or w      ", " ... search with browser "
   puts_c "link or l      ", " ... links"
+  puts_c "l [tag]        ", " ... open random link with tag"
+  puts_c "l [url] [tag1=optional] [tag2] [tag3] ...      ", " ... add links with tags"
   puts_c "todo or t      ", " ... manage todo"
   puts_c "book or b      ", " ... bookmarking function"
   puts_c "//             ", " ... open the link containing the keyword"
@@ -163,7 +165,7 @@ def help()
   puts   "------------------------------------------------------".blue
   puts_c "al             ", "   ... show all alias"
   puts_c "bl             ", " ... show bookmark keys"
-  puts_c "lt             ", " ... show link tags"
+  puts_c "tl             ", " ... show link tags"
   puts   "------------------------------------------------------".blue
   puts_c "q              ", " ... if at home, quit app and else go back home"
   puts_c "qq              ", "... force to quit application"

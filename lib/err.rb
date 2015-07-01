@@ -1,7 +1,7 @@
  def handle_exception(e)
    puts
    puts "------------------------------".red
-   puts "ERROR #{e}".red
+   puts "ERROR #{e.message}".red
    stack = Array.new
    e.backtrace.inspect.split(',').each do |elem|
      stack.push elem.gsub("\"","").gsub("[","").gsub("]","")

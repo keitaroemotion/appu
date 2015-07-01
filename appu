@@ -12,6 +12,8 @@ require '/usr/local/etc/appu/lib/alias'
 require '/usr/local/etc/appu/lib/memo'
 require '/usr/local/etc/appu/lib/ca'
 require '/usr/local/etc/appu/lib/book'
+require '/usr/local/etc/appu/lib/err'
+require '/usr/local/etc/appu/lib/dictionary'
 require 'fileutils'
 require 'colorize'
 
@@ -55,8 +57,12 @@ def operate(operation)
     when "link", "l"
       #このうしろタグがあればかってに空く仕様だと魅力
       #if additional arg tag = listtag
-      show_linkmenu args[1]
-    when "lt"
+      if args.size > 2
+        addlink args[1], args[2..args.size-1]
+      else
+        show_linkmenu args[1]
+      end
+    when "tl"
       list_tags
     when "web", "w" #webfind
       exe_web
@@ -64,6 +70,10 @@ def operate(operation)
       system("rm -rf ~/.Trash/*")
     when "renamefiles"
       exe_rename
+    when "dic"
+      dictionary
+    when "dict" # dictionary
+      exe_dictionary
     when "del"
       del
     when "kill", "k"
@@ -97,7 +107,11 @@ def operate(operation)
       home
     end
   rescue Exception => e
-    handle_exception e
+    if e.message == "exit"
+      abort
+    else
+      handle_exception e
+    end
   end
   bort
 end

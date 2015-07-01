@@ -22,11 +22,9 @@ def show_linkmenu(oper, location_flag=false)
       show_linkmenu nil, location_flag
     when "a"
       addlink()
-      tail
       show_linkmenu nil, location_flag
     when "x"
       open_rand ""
-      tail
       show_linkmenu nil, location_flag
     when "o"
       #todo: list tag
@@ -42,7 +40,11 @@ def show_linkmenu(oper, location_flag=false)
     else
       # this time, rand open per tag
       # regard oper as tag
-      open_rand oper
+      if oper.start_with? "http"
+        stash_link oper, Array.new
+      else
+        open_rand oper
+      end
       show_linkmenu nil, location_flag
     end
   end
@@ -72,18 +74,26 @@ end
 
 
 
-def addlink()
-  print "url: "
-  urllink = $stdin.gets.chomp
-  print "tags (ex: tag1 tag2 tag3): "
-  tags = Array.new
-  $stdin.gets.chomp.split(' ').each do |tag|
-    tags.push tag
+def addlink(urllink=nil, tags=nil)
+  from_global = true
+  if urllink == nil
+    from_global = false
+    print "url: "
+    urllink = $stdin.gets.chomp
   end
+  if tags == nil
+    from_global = false
+    print "tags (ex: tag1 tag2 tag3): "
+    tags = Array.new
+    $stdin.gets.chomp.split(' ').each do |tag|
+      tags.push tag
+    end
+  end
+
   stash_link(urllink, tags)
   def askin()
     puts
-    print ":q = quit , Enter: = next\n> "
+    print ":q = quit , Enter: = next ?:  "
     case $stdin.gets.chomp
     when "q"
      show_linkmenu "q"
@@ -93,7 +103,9 @@ def addlink()
      askin
     end
   end
-  askin
+  if from_global == false
+    askin
+  end
 end
 
 
