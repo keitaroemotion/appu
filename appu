@@ -10,7 +10,7 @@ require '/usr/local/etc/appu/lib/process'
 require '/usr/local/etc/appu/lib/filex'
 require '/usr/local/etc/appu/lib/alias'
 require '/usr/local/etc/appu/lib/memo'
-require '/usr/local/etc/appu/lib/ca'
+#require '/usr/local/etc/appu/lib/ca'
 require '/usr/local/etc/appu/lib/book'
 require '/usr/local/etc/appu/lib/err'
 require '/usr/local/etc/appu/lib/dictionary'
@@ -48,8 +48,8 @@ def operate(operation)
     when "book", "b"  # bookmark
       exe_book
     when "cal"
-      disp
-      puts
+ #     disp
+ #     puts
     when "task"
       task
     when "todo", "t"
